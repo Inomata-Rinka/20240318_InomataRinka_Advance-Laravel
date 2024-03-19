@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Author;
 use Illuminate\Http\Request;
+use App\Http\Requests\AuthorRequest;
 
 class AuthorController extends Controller
 {
@@ -17,7 +18,7 @@ class AuthorController extends Controller
             return view('add');
     }
     //データ追加機能
-    public function create(Request $request){
+    public function create(AuthorRequest $request){
         $form = $request->all();
         Author::create($from);
         return redirect('/');
@@ -43,26 +44,5 @@ class AuthorController extends Controller
     public function remove(Request $request){
         Author::find($request->id)->delete();
         return redirect('/');
-    }
-    //以下は、name属性を利用して検索できるようにしてる
-    public function find()
-    {
-        return view('find', ['input' => '']);
-    }
-    public function search(Request $request)
-    {
-        $item = Author::where('name', 'LIKE',"%{$request->input}%")->first();
-        $param = [
-            'input' => $request->input,
-            'item' => $item
-        ];
-        return view('find', $param);
-    }
-    //モデル統合ルート
-    public function bind(Author $author){
-        $data = [
-            'item' => $author
-        ];
-        return view('author.binds',$data);
     }
 }
