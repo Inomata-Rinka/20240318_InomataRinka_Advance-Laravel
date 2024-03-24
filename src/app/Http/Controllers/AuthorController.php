@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Author;
 use Illuminate\Http\Request;
+//フォームリクエストの読み込み
 use App\Http\Requests\AuthorRequest;
 
 class AuthorController extends Controller
@@ -29,7 +30,7 @@ class AuthorController extends Controller
         return view('edit',['form' => $author]);
     }
     //更新機能
-    public function update(Request $request){
+    public function update(AuthorRequest $request){
         $form = $request->all();
         unset($form['_token']);
         Author::find($request->id)->update($form);
@@ -44,5 +45,16 @@ class AuthorController extends Controller
     public function remove(Request $request){
         Author::find($request->id)->delete();
         return redirect('/');
+    }
+    //エラーメッセージ表示に失敗した時エラー用ビューに移動
+    public function verror(){
+        return view('verror');
+    }
+    //authorsテーブルのデータを返すアクション追記
+    public function relate(Request $request){
+        $hasItems = Author::has('book')->get();
+        $noItemes = Author::doesntHave('book')->get();
+        $param = ['hasItems' => $hasItems, 'noItems' => $noItems];
+        return view('author.index',['items'=>$items]);
     }
 }
